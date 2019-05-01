@@ -17,6 +17,7 @@
 #include "llvm/IR/DataLayout.h"
 #include "llvm/IR/Instruction.h"
 #include "llvm/IR/Instructions.h"
+#include "llvm/IR/InstrTypes.h"
 #include "llvm/IR/LegacyPassManager.h"
 #include "llvm/IR/Module.h"
 #include "llvm/IRReader/IRReader.h"
@@ -73,9 +74,7 @@ private:
     ColorMap[BB] = TopoSorter::GREY;
     // For demonstration, using the lowest-level APIs here. A BB's successors
     // are determined by looking at its terminator instruction.
-    const TerminatorInst *TInst = BB->getTerminator();
-    for (unsigned I = 0, NSucc = TInst->getNumSuccessors(); I < NSucc; ++I) {
-      BasicBlock *Succ = TInst->getSuccessor(I);
+    for (const BasicBlock *Succ : successors(BB)) {
       Color SuccColor = ColorMap[Succ];
       if (SuccColor == TopoSorter::WHITE) {
         if (!recursiveDFSToposort(Succ))
